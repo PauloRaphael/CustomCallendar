@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace CustomCalendar.Migrations
+namespace CustomCalendarAPI.Migrations
 {
     /// <inheritdoc />
     public partial class SecondMigration : Migration
