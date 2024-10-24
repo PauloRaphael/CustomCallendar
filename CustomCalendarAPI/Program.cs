@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using CustomCalendar.Data;
+using DataRepository.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,9 +1,9 @@
-﻿using CustomCalendar.Data;
-using CustomCalendar.Entities;
+﻿using DataRepository.Data;
+using DataRepository.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CustomCalendar.Controllers
+namespace CustomCalendarAPI.Controllers
 {
 
     [Route("api/[controller]")]
@@ -63,7 +63,7 @@ namespace CustomCalendar.Controllers
             {
                 await _dbContext.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException e)
+            catch (DbUpdateConcurrencyException)
             {
                 if (!BlockExists(id))
                 {
