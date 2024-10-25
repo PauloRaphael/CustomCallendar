@@ -20,6 +20,11 @@ namespace CustomCalendarMVC.Controllers
             return View(await _context.Block.OrderBy(b => b.Date).ToListAsync());
         }
 
+        public async Task<IActionResult> Previous()
+        {
+            return View(await _context.Block.OrderBy(b => b.Date).ToListAsync());
+        }
+
         // GET: Blocks/Details/5
         public async Task<IActionResult> Details(int? id)
         {

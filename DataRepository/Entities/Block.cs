@@ -12,7 +12,7 @@ public class Block
     public string Title { get; set; }
 
     [Required(ErrorMessage = "{0} Required")]
-    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+    [DisplayFormat(DataFormatString = "{0:ddd dd MMM yyyy HH:mm}")]
     public DateTime Date { get; set; }
 
     [Required(ErrorMessage = "{0} Required")]

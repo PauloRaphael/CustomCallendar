@@ -18,12 +18,15 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                  <!-- <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarColor02">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Blocks" asp-action="Index">block</a>
+                            <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Index">Next Events</a>
                         </li>
-                     </ul> -->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Previous">Previous Events</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -36,7 +39,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - CustomCalendarMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Custom Calendar - Paulo Raphael Silva Brito
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
