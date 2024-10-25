@@ -1,17 +1,20 @@
 ﻿@model IEnumerable<DataRepository.Entities.Block>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Next Events";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <h1>@ViewData["Title"]</h1>
+    <p class="mt-auto mb-auto">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </p>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<hr />
 
 <div class="container">
-    <div class="row">
+    <div class="row d-flex justify-content-center flex-wrap">
 
         @foreach (var item in Model.Select((value, index) => new { value, index }))
         {
@@ -23,19 +26,22 @@
                 @:</div>
             }
             // Start a new row
-                @:<div class="row">
+                @:<div class="row d-flex justify-content-center flex-wrap">
             }
+            var blockClass = item.index % 2 == 0 ? "bg-primary text-white" : "bg-secondary text-white";
 
-            <div class="col-md-2 block">
+            <div class="col-md-2 block @blockClass p-2 m-1 text-center rounded-1 d-flex flex-column justify-content-between">
+            <div>
                 <h5>@Html.DisplayFor(modelItem => item.value.Title)</h5>
                 <p>@Html.DisplayFor(modelItem => item.value.Date)</p>
                 <p>@Html.DisplayFor(modelItem => item.value.EventText)</p>
-                <p>
-                    <a asp-action="Edit" asp-route-id="@item.value.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.value.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.value.Id">Delete</a>
-                </p>
-            </div>
+                    </div>
+    <p>
+        <a asp-action="Edit" asp-route-id="@item.value.Id"><span class="fa fa-edit text-light"></span></a> |
+        <a asp-action="Details" asp-route-id="@item.value.Id">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.value.Id"><span class="fa fa-trash-o text-light"></span></a>
+    </p>
+</div>
         }
     </div>
 </div>
