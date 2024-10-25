@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataRepository.Entities;
 
@@ -9,6 +10,7 @@ public class Block
 
     [MaxLength(50)]
     [Required(ErrorMessage = "{0} Required")]
+    [DisplayName("Event")]
     public string Title { get; set; }
 
     [Required(ErrorMessage = "{0} Required")]
@@ -17,5 +19,6 @@ public class Block
 
     [Required(ErrorMessage = "{0} Required")]
     [MaxLength(100)]
+    [DisplayName("Event Description")]
     public string EventText { get; set; }
 }
