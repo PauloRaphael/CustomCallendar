@@ -20,6 +20,7 @@ public class Block
     [MaxLength(100)]
     [DisplayName("Event Description")]
     public string EventText { get; set; }
-    
+
+    [DisplayName("Important: ")]
     public Boolean Important { get; set; }
 }

@@ -54,7 +54,7 @@ namespace CustomCalendarMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Date,EventText")] Block block)
+        public async Task<IActionResult> Create([Bind("Id,Title,Date,EventText,Important")] Block block)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace CustomCalendarMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,EventText")] Block block)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,EventText,Important")] Block block)
         {
             if (id != block.Id)
             {
