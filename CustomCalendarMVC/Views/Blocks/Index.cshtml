@@ -19,16 +19,6 @@
             @foreach (var item in Model.Where(m => m.Date > DateTime.Now).Select((value, index) => new { value, index
             }))
             {
-            if (item.index % 5 == 0)
-            {
-            // Close the previous row (except for the first iteration)
-            if (item.index != 0)
-            {
-            @:</div>
-        }
-        // Start a new row
-        @:<div class="row d-flex justify-content-center flex-wrap">
-            }
             var blockClass = item.index % 2 == 0 ? "bg-primary" : "bg-secondary";
 
 
