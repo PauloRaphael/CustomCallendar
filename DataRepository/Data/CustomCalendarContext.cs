@@ -10,6 +10,7 @@ public class CustomCalendarDBContext : DbContext
     {
     }
     public DbSet<Block> Block { get; set; }
+    public DbSet<Category> Category { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
