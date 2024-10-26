@@ -4,6 +4,7 @@ using DataRepository.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CustomCalendarAPI.Migrations
 {
     [DbContext(typeof(CustomCalendarDBContext))]
-    partial class CustomCalendarDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241026220112_BlockCategoryRelationship")]
+    partial class BlockCategoryRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

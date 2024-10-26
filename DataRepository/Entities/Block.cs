@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataRepository.Entities;
 
@@ -23,4 +24,10 @@ public class Block
 
     [DisplayName("Important: ")]
     public Boolean Important { get; set; }
+
+    public Category Category { get; set; }
+
+    [ForeignKey("CategoryId")]
+    public int CategoryId { get; set; }
+
 }
