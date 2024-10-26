@@ -5,7 +5,6 @@ namespace DataRepository.Entities;
 
 public class Block
 {
-
     public int Id { get; set; }
 
     [MaxLength(50)]
