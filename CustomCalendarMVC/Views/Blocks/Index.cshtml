@@ -19,8 +19,15 @@
             @foreach (var item in Model.Where(m => m.Date > DateTime.Now).Select((value, index) => new { value, index
             }))
             {
+
+            string important = "";
             var blockClass = item.index % 2 == 0 ? "bg-primary" : "bg-secondary";
 
+            if (item.value.Important)
+            {
+                important = " | Important!";
+                blockClass = "bg-danger";
+            }
 
             <div class="card text-white text-center @blockClass text-white m-1 p-0" style="max-width: 14rem;">
                 <div class="card-header w-100">@Html.DisplayFor(modelItem => item.value.Date)
@@ -50,7 +57,8 @@
                     {
                     @("Hoje")
                     }
-                    }
+                    }  
+                    @important
                 </div>
             </div>
             }
