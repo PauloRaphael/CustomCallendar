@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DataRepository.Data;
 using DataRepository.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CustomCalendarMVC.Controllers
 {
@@ -24,7 +25,6 @@ namespace CustomCalendarMVC.Controllers
         {
             return View(await _context.Block.OrderBy(b => b.Date).ToListAsync());
         }
-
         // GET: Blocks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -34,7 +34,9 @@ namespace CustomCalendarMVC.Controllers
             }
 
             var block = await _context.Block
+                .Include(b => b.Category) // Include the Category
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (block == null)
             {
                 return NotFound();
@@ -43,18 +45,17 @@ namespace CustomCalendarMVC.Controllers
             return View(block);
         }
 
-        // GET: Blocks/Create
+
         public IActionResult Create()
         {
+            var categories = _context.Category.ToList(); // Ensure this is not null
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
             return View();
         }
 
-        // POST: Blocks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Date,EventText,Important")] Block block)
+        public async Task<IActionResult> Create(Block block)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +63,18 @@ namespace CustomCalendarMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+
+            foreach(var error in errors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+
+            ModelState.Remove("Category");
+
+            // Reassign ViewBag.CategoryId if ModelState is invalid
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
             return View(block);
         }
 
@@ -78,15 +91,17 @@ namespace CustomCalendarMVC.Controllers
             {
                 return NotFound();
             }
+
+            // Populate categories for the dropdown
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+
             return View(block);
         }
 
-        // POST: Blocks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,EventText,Important")] Block block)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,EventText,Important,CategoryId")] Block block)
         {
             if (id != block.Id)
             {
@@ -113,8 +128,12 @@ namespace CustomCalendarMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // Repopulate ViewBag.CategoryId if validation fails
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
             return View(block);
         }
+
 
         // GET: Blocks/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -125,7 +144,9 @@ namespace CustomCalendarMVC.Controllers
             }
 
             var block = await _context.Block
+                .Include(b => b.Category) // Include the Category
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (block == null)
             {
                 return NotFound();
@@ -133,6 +154,7 @@ namespace CustomCalendarMVC.Controllers
 
             return View(block);
         }
+
 
         // POST: Blocks/Delete/5
         [HttpPost, ActionName("Delete")]

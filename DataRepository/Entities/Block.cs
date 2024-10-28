@@ -25,9 +25,9 @@ public class Block
     [DisplayName("Important: ")]
     public Boolean Important { get; set; }
 
-    public Category Category { get; set; }
+    public Category? Category { get; set; }
 
-    [ForeignKey("CategoryId")]
+    [Required]
     public int CategoryId { get; set; }
 
 }

@@ -31,13 +31,18 @@
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Important)
-        </dt>   
+        </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Important)
+        </dd>
+        <dt class="col-sm-2">
+            Category
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name) <!-- Display the Category Name -->
         </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
-    
 </div>
