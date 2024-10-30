@@ -186,5 +186,18 @@ namespace CustomCalendarMVC.Controllers
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
             return View(nameof(Index), new BlockViewModel { Block = blocks });
         }
+        public IActionResult DeleteOldBlocks()
+        {
+            var currentTime = DateTime.Now;
+            var oldBlocks = _context.Block.Where(b => b.Date < currentTime).ToList();
+
+            if (oldBlocks.Count != 0)
+            {
+                _context.Block.RemoveRange(oldBlocks);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

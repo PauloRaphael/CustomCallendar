@@ -7,7 +7,11 @@ ViewData["Title"] = "Previous Events";
 <div class="d-flex justify-content-between align-items-center mt-3">
     <h1>@ViewData["Title"]</h1>
     <p class="mt-auto mb-auto">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-action="Create" class="btn btn-primary me-2">Create New</a>
+        <a asp-action="DeleteOldBlocks" class="btn btn-danger"
+           onclick="return confirm('Are you sure you want to delete all blocks with dates before today?');">
+            Delete Old Blocks
+        </a>
     </p>
 </div>
 
