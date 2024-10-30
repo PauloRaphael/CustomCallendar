@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DataRepository.Data;
 using DataRepository.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CustomCalendarMVC.Models;
 
 namespace CustomCalendarMVC.Controllers
 {
@@ -16,9 +17,11 @@ namespace CustomCalendarMVC.Controllers
         }
 
         // GET: Blocks
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Block.OrderBy(b => b.Date).ToListAsync());
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
+            var blocks = _context.Block.ToList();
+            return View(new BlockViewModel { Block = blocks });
         }
 
         public async Task<IActionResult> Previous()
@@ -66,7 +69,7 @@ namespace CustomCalendarMVC.Controllers
 
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
-            foreach(var error in errors)
+            foreach (var error in errors)
             {
                 Console.WriteLine(error.ErrorMessage);
             }
@@ -174,6 +177,14 @@ namespace CustomCalendarMVC.Controllers
         private bool BlockExists(int id)
         {
             return _context.Block.Any(e => e.Id == id);
+        }
+
+        public IActionResult SearchByCategory(int CategoryId)
+        {
+            // Fetch the blocks based on the CategoryId
+            var blocks = _context.Block.Where(b => b.CategoryId == CategoryId).ToList();
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
+            return View(nameof(Index), new BlockViewModel { Block = blocks });
         }
     }
 }
