@@ -93,8 +93,6 @@ namespace CustomCalendarMVC.Controllers
                 return View(block);
             }
 
-            Console.WriteLine(repetitions.ToString() + "aaaaaaa");
-
             var blocksToAdd = new List<Block>(); 
             var initialDate = block.Date; 
 
@@ -232,13 +230,34 @@ namespace CustomCalendarMVC.Controllers
             return _context.Block.Any(e => e.Id == id);
         }
 
-        public IActionResult SearchByCategory(int CategoryId)
+        public IActionResult Search(int? CategoryId, DateTime? from, DateTime? to)
         {
-            // Fetch the blocks based on the CategoryId
-            var blocks = _context.Block.Where(b => b.CategoryId == CategoryId).ToList();
+            // Start with all blocks
+            var blocks = _context.Block.AsQueryable();
+
+            if (CategoryId.HasValue)
+            {
+                blocks = blocks.Where(b => b.CategoryId == CategoryId.Value);
+            }
+
+            if (from.HasValue)
+            {
+                blocks = blocks.Where(b => b.Date >= from.Value);
+            }
+
+            if (to.HasValue)
+            {
+                blocks = blocks.Where(b => b.Date <= to.Value);
+            }
+
+            var blockList = blocks.ToList();
+
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
-            return View(nameof(Index), new BlockViewModel { Block = blocks });
+
+            return View(nameof(Index), new BlockViewModel { Block = blockList });
         }
+
+
         public IActionResult DeleteOldBlocks()
         {
             var currentTime = DateTime.Now;

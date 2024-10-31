@@ -14,10 +14,20 @@
 <hr />
 
 <div class="d-flex justify-content-end">
-    <form asp-action="SearchByCategory" method="get">
+    <form asp-action="Search" method="get">
         <div class="form-group d-inline-block align-content me-2">
             <label asp-for="CategoryId" class="control-label">Category</label>
-            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                <option></option>
+            </select>
+        </div>
+        <div class="form-group d-inline-block align-content me-2">
+            <label asp-for="From" class="control-label">From</label>
+            <input asp-for="From" class="form-control" type="date"></input>
+        </div>
+        <div class="form-group d-inline-block align-content me-2">
+            <label asp-for="To" class="control-label">To</label>
+            <input asp-for="To" class="form-control" type="date"></input>
         </div>
         <div class="form-group d-inline-block">
             <input type="submit" value="Search" class="btn btn-primary my-4" />
