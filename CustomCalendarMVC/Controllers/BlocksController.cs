@@ -230,7 +230,7 @@ namespace CustomCalendarMVC.Controllers
             return _context.Block.Any(e => e.Id == id);
         }
 
-        public IActionResult Search(int? CategoryId, DateTime? from, DateTime? to)
+        public IActionResult Search(int? CategoryId, DateTime? from, DateTime? to, bool important)
         {
             // Start with all blocks
             var blocks = _context.Block.AsQueryable();
@@ -248,6 +248,11 @@ namespace CustomCalendarMVC.Controllers
             if (to.HasValue)
             {
                 blocks = blocks.Where(b => b.Date <= to.Value);
+            }
+
+            if (important)
+            {
+                blocks = blocks.Where(b => b.Important == true);
             }
 
             var blockList = blocks.ToList();

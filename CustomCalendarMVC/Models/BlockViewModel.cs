@@ -16,6 +16,7 @@ namespace CustomCalendarMVC.Models
         [DisplayFormat(DataFormatString = "{0:ddd dd MMM yyyy}")]
         public DateTime? To { get; set; }
         public IEnumerable<DataRepository.Entities.Block> Block { get; set; }
+        public bool Important { get; set; }
     }
 
 }
