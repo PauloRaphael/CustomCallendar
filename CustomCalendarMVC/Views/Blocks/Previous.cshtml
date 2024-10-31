@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DataRepository.Entities.Block>
+﻿@model BlockViewModel
 
 @{
 ViewData["Title"] = "Previous Events";
@@ -17,10 +17,36 @@ ViewData["Title"] = "Previous Events";
 
 <hr />
 
+<div class="d-flex justify-content-end">
+    <form asp-action="Search" method="get">
+        <div class="form-group d-inline-block align-content me-2">
+            <label asp-for="CategoryId" class="control-label">Category</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                <option></option>
+            </select>
+        </div>
+        <div class="form-group d-inline-block align-content me-2">
+            <label asp-for="From" class="control-label">From</label>
+            <input asp-for="From" class="form-control" type="date"></input>
+        </div>
+        <div class="form-group d-inline-block align-content me-2">
+            <label asp-for="To" class="control-label">To</label>
+            <input asp-for="To" class="form-control" type="date"></input>
+        </div>
+        <div class="form-group d-inline-block me-2">
+            <label asp-for="Important" class="control-label me-2"></label>
+            <input asp-for="Important" class="form-check-input" />
+        </div>
+        <div class="form-group d-inline-block">
+            <input type="submit" value="Search" class="btn btn-primary my-4" />
+        </div>
+    </form>
+</div>
+
 <div class="container">
     <div class="row d-flex justify-content-center flex-wrap">
 
-        @foreach (var item in Model.Where(m => m.Date < DateTime.Now).Select((value, index)=> new { value, index }))
+        @foreach (var item in Model.Block.Where(m => m.Date < DateTime.Now).Select((value, index)=> new { value, index }))
             {
 
             string important = "";

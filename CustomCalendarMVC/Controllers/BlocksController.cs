@@ -26,7 +26,9 @@ namespace CustomCalendarMVC.Controllers
 
         public async Task<IActionResult> Previous()
         {
-            return View(await _context.Block.OrderBy(b => b.Date).ToListAsync());
+            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
+            var blocks = _context.Block.ToList();
+            return View(new BlockViewModel { Block = await _context.Block.OrderBy(b => b.Date).ToListAsync() });
         }
         // GET: Blocks/Details/5
         public async Task<IActionResult> Details(int? id)
