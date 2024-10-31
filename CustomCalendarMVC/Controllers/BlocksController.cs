@@ -67,19 +67,72 @@ namespace CustomCalendarMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-
-            foreach (var error in errors)
-            {
-                Console.WriteLine(error.ErrorMessage);
-            }
-
             ModelState.Remove("Category");
 
             // Reassign ViewBag.CategoryId if ModelState is invalid
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
             return View(block);
         }
+
+        public IActionResult CreateMany()
+        {
+            var categories = _context.Category.ToList(); // Ensure this is not null
+            ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateMany(Block block, int repetitions, string span)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.Remove("Category");
+                ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+                return View(block);
+            }
+
+            Console.WriteLine(repetitions.ToString() + "aaaaaaa");
+
+            var blocksToAdd = new List<Block>(); 
+            var initialDate = block.Date; 
+
+            for (int i = 0; i < repetitions; i++)
+            {
+
+                var newBlock = new Block
+                {
+                    Id = 0,
+                    Title = block.Title,
+                    EventText = block.EventText,
+                    Important = block.Important,
+                    CategoryId = block.CategoryId
+                };
+
+                switch (span)
+                {
+                    case "Yearly":
+                        newBlock.Date = initialDate.AddYears(i);
+                        break;
+                    case "Monthly":
+                        newBlock.Date = initialDate.AddMonths(i);
+                        break;
+                    case "Daily":
+                        newBlock.Date = initialDate.AddDays(i);
+                        break;
+                }
+
+                blocksToAdd.Add(newBlock);
+            }
+
+            _context.Block.AddRange(blocksToAdd);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
 
         // GET: Blocks/Edit/5
         public async Task<IActionResult> Edit(int? id)

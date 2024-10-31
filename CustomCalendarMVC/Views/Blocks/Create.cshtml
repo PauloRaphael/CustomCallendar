@@ -4,7 +4,12 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <h1>@ViewData["Title"]</h1>
+    <p class="mt-auto mb-auto">
+        <a asp-action="CreateMany" class="btn btn-primary">Create Many</a>
+    </p>
+</div>
 
 <hr />
 <div class="row">

@@ -28,6 +28,7 @@ public class Block
     public Category? Category { get; set; }
 
     [Required]
+    [DisplayName("Category")]
     public int CategoryId { get; set; }
 
 }
