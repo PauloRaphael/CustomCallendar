@@ -1,0 +1,65 @@
+﻿@model BlockViewModel
+
+<div class="d-flex justify-content-end mt-3">
+    @await Html.PartialAsync("_SearchForm", Model)
+</div>
+
+<div class="container">
+    <div class="row d-flex justify-content-center flex-wrap">
+
+        @foreach (var item in Model.Block.Where(m => m.Date > DateTime.Now).Select((value, index) => new
+        {
+            value,
+            index
+        }))
+        {
+
+            //var i = item.value.Category.Name == "";
+
+            string important = "";
+            var blockClass = item.index % 2 == 0 ? "bg-primary" : "bg-secondary";
+
+            if (item.value.Important)
+            {
+                important = " | Important!";
+                blockClass = "bg-danger";
+            }
+
+            <div class="card text-white text-center @blockClass text-white m-1 p-0" style="max-width: 14rem;">
+                <div class="card-header w-100">
+                    @Html.DisplayFor(modelItem => item.value.Date)
+                    <a asp-action="Details" asp-route-id="@item.value.Id">
+                        <span class="fa fa-info-circle text-light"></span>
+                    </a>
+                </div>
+                <div class="card-body block d-flex flex-column justify-content-between text-break text-center p-3">
+                    <h4 class="card-title">@Html.DisplayFor(modelItem => item.value.Title)</h4>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.value.EventText)</p>
+                    <div>
+                        <a asp-action="Delete" asp-route-id="@item.value.Id">
+                            <span class="fa fa-trash-o text-light"></span>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="card-footer text-muted">
+                    @{
+                        var today = DateTime.Now;
+                        var eventDate = item.value.Date;
+                        var daysLeft = (eventDate - today).Days;
+
+                        if (daysLeft > 0)
+                        {
+                            @($" Em {daysLeft} dias")
+                        }
+                        else if (daysLeft == 0)
+                        {
+                            @("Hoje")
+                        }
+                    }
+                    @important
+                </div>
+            </div>
+        }
+    </div>
+</div>

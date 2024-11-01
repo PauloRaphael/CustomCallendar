@@ -235,7 +235,7 @@ namespace CustomCalendarMVC.Controllers
 
         public IActionResult Search(int? CategoryId, DateTime? from, DateTime? to, bool important)
         {
-            // Start with all blocks
+
             var blocks = _context.Block.AsQueryable();
 
             if (CategoryId.HasValue)
@@ -262,7 +262,8 @@ namespace CustomCalendarMVC.Controllers
 
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
 
-            return View(nameof(Index), new BlockViewModel { Block = blockList });
+            return View(nameof(Search), new BlockViewModel { Block = blockList });
+
         }
 
 
