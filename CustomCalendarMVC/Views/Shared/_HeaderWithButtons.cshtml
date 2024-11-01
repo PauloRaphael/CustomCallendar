@@ -1,0 +1,19 @@
+﻿@model BlockViewModel
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <h1>@ViewData["Title"]</h1>
+    <p class="mt-auto mb-auto">
+        <a asp-action="Create" class="btn btn-primary me-3">Create New</a>
+
+        @{
+            if ((ViewData["Title"]?.ToString() ?? "") == "Previous Events")
+            {
+                <a asp-action="DeleteOldBlocks" class="btn btn-danger"
+                   onclick="return confirm('Are you sure you want to delete all blocks with dates before today?');">
+                    Delete Old Blocks
+                </a>
+            }
+        }
+    </p>
+</div>
+<hr />

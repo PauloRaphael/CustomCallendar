@@ -30,6 +30,7 @@ namespace CustomCalendarMVC.Controllers
             var blocks = _context.Block.ToList();
             return View(new BlockViewModel { Block = await _context.Block.OrderBy(b => b.Date).ToListAsync() });
         }
+
         // GET: Blocks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -39,7 +40,7 @@ namespace CustomCalendarMVC.Controllers
             }
 
             var block = await _context.Block
-                .Include(b => b.Category) // Include the Category
+                .Include(b => b.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (block == null)
@@ -53,7 +54,7 @@ namespace CustomCalendarMVC.Controllers
 
         public IActionResult Create()
         {
-            var categories = _context.Category.ToList(); // Ensure this is not null
+            var categories = _context.Category.ToList();
             ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
             return View();
         }
