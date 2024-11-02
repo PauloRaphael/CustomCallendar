@@ -13,7 +13,7 @@
 <div class="container">
     <div class="row d-flex justify-content-center flex-wrap">
 
-        @foreach (var item in Model.Block.Where(m => m.Date > DateTime.Now).Select((value, index) => new
+        @foreach (var item in Model.Block.Select((value, index) => new
         {
             value,
             index

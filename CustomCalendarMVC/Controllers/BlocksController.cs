@@ -20,15 +20,19 @@ namespace CustomCalendarMVC.Controllers
         public IActionResult Index()
         {
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
-            var blocks = _context.Block.ToList();
+
+            var blocks = _context.Block.Where(m => m.Date >= DateTime.Now).OrderBy(b => b.Date).ToList();
+
             return View(new BlockViewModel { Block = blocks });
         }
 
-        public async Task<IActionResult> Previous()
+        public IActionResult Previous()
         {
             ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
-            var blocks = _context.Block.ToList();
-            return View(new BlockViewModel { Block = await _context.Block.OrderBy(b => b.Date).ToListAsync() });
+
+            var blocks = _context.Block.Where(m => m.Date < DateTime.Now).OrderBy(b => b.Date).ToList();
+
+            return View(new BlockViewModel { Block = blocks });
         }
 
         // GET: Blocks/Details/5
