@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DataRepository.Data;
+using DataRepository.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<CustomCalendarDBContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 23))));
 
+builder.Services.AddScoped<BlockService>();
 
 var app = builder.Build();
 

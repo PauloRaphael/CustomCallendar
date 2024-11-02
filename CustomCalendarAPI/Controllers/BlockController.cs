@@ -1,7 +1,9 @@
 ﻿using DataRepository.Data;
 using DataRepository.Entities;
+using DataRepository.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CustomCalendarAPI.Controllers
 {
@@ -10,26 +12,26 @@ namespace CustomCalendarAPI.Controllers
     [ApiController]
     public class BlockController : Controller
     {
-        private readonly CustomCalendarDBContext _dbContext;
+        private readonly BlockService _blockService;
 
-        public BlockController(CustomCalendarDBContext dbContext)
+        public BlockController(BlockService blockService)
         {
-            _dbContext = dbContext;
+            _blockService = blockService;
         }
 
         //GET: api/Block
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Block>>> GetBlock()
+        public async Task<ActionResult<IEnumerable<Block>>> GetBlocks()
         {
-            List<Block> blocks = await _dbContext.Block.ToListAsync();
+            var blocks = _blockService.GetBlocksAsync();
             return Ok(blocks);
         }
 
         //GET api/Block/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Block>> GetBlock(int id)
+        public async Task<ActionResult<Block>> GetBlockById(int id)
         {
-            var block = await _dbContext.Block.FindAsync(id);
+            var block = await _blockService.GetBlockAsync(id);
 
             if (block == null)
             {
@@ -42,10 +44,14 @@ namespace CustomCalendarAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Block>> PostBlock(Block block)
         {
-            _dbContext.Block.Add(block);
-            await _dbContext.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid block");
+            }
 
-            return CreatedAtAction(nameof(GetBlock), new { id = block.Id }, block);
+            await _blockService.InsertAsync(block);
+
+            return CreatedAtAction(nameof(GetBlockById), new { id = block.Id }, block);
         }
 
         [HttpPut("{id}")]
@@ -56,16 +62,13 @@ namespace CustomCalendarAPI.Controllers
                 return BadRequest();
             }
 
-            _dbContext.Entry(block).State = EntityState.Modified;
-
-
             try
             {
-                await _dbContext.SaveChangesAsync();
+                await _blockService.UpdateBlockAsync(block);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BlockExists(id))
+                if (!_blockService.BlockExists(id))
                 {
                     return NotFound();
                 }
@@ -81,25 +84,16 @@ namespace CustomCalendarAPI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteBlock(int id)
         {
-            var aluno = await _dbContext.Block.FindAsync(id);
-                                               
+            var aluno = await _blockService.GetBlockAsync(id);
+
             if (aluno == null)
             {
                 return NotFound();
             }
 
-            _dbContext.Block.Remove(aluno);
-            await _dbContext.SaveChangesAsync();
+            await _blockService.DeleteBlockAsync(aluno);
 
             return NoContent();
         }
-
-        private bool BlockExists(int id)
-        {
-            return _dbContext.Block.Any(e => e.Id == id);
-        }
-
     }
-
-    
 }
