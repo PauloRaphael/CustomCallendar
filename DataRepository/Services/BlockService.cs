@@ -34,28 +34,6 @@ namespace DataRepository.Services
             return await _context.Block.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task InsertAsync(Block block)
-        {
-            _context.Add(block);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateBlockAsync(Block block)
-        {
-            _context.Update(block);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteBlockAsync(Block block)
-        {
-            _context.Block.Remove(block);
-            await _context.SaveChangesAsync();
-        }
-        public bool BlockExists(int id)
-        {
-            return _context.Block.Any(e => e.Id == id);
-        }
-
         public async Task<IEnumerable<Block>> Search(int? CategoryId, DateTime? from, DateTime? to, bool important)
         {
 
@@ -83,6 +61,66 @@ namespace DataRepository.Services
 
             return await blocks.ToListAsync();
 
+        }
+
+        public async Task InsertAsync(Block block)
+        {
+            _context.Add(block);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task InsertMany(Block block, int repetitions, string span)
+        {
+            var blocksToAdd = new List<Block>();
+            var initialDate = block.Date;
+
+            for (int i = 0; i < repetitions; i++)
+            {
+
+                var newBlock = new Block
+                {
+                    Id = 0,
+                    Title = block.Title,
+                    EventText = block.EventText,
+                    Important = block.Important,
+                    CategoryId = block.CategoryId
+                };
+
+                switch (span)
+                {
+                    case "Yearly":
+                        newBlock.Date = initialDate.AddYears(i);
+                        break;
+                    case "Monthly":
+                        newBlock.Date = initialDate.AddMonths(i);
+                        break;
+                    case "Daily":
+                        newBlock.Date = initialDate.AddDays(i);
+                        break;
+                }
+
+                blocksToAdd.Add(newBlock);
+            }
+
+            _context.Block.AddRange(blocksToAdd);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateBlockAsync(Block block)
+        {
+            _context.Update(block);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteBlockAsync(Block block)
+        {
+            _context.Block.Remove(block);
+            await _context.SaveChangesAsync();
+        }
+        public bool BlockExists(int id)
+        {
+            return _context.Block.Any(e => e.Id == id);
         }
 
         public async Task DeleteOldBlocks()
