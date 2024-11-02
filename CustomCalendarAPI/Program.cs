@@ -16,6 +16,7 @@ builder.Services.AddDbContext<CustomCalendarDBContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 23))));
 
 builder.Services.AddScoped<BlockService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
