@@ -22,19 +22,35 @@ namespace DataRepository.Services
 
         public async Task<IEnumerable<Block>> GetFutureBlocksAsync()
         {
-            return await _context.Block.Where(m => m.Date >= DateTime.Now).OrderBy(b => b.Date).ToListAsync();
+            return await _context
+                        .Block
+                        .Where(m => m.Date >= DateTime.Now)
+                        .OrderBy(b => b.Date)
+                        .ToListAsync();
         }
-        public async Task<IEnumerable<Block>> GetPreviousBlocks()
+        public async Task<IEnumerable<Block>> GetPreviousBlocksAsync()
         {
-            return await _context.Block.Where(m => m.Date < DateTime.Now).OrderBy(b => b.Date).ToListAsync();
+            return await _context
+                         .Block
+                         .Where(m => m.Date < DateTime.Now)
+                         .OrderBy(b => b.Date)
+                         .ToListAsync();
         }
 
-        public async Task<Block?> GetBlockAsync(int id)
+        public async Task<Block?> GetBlockAsync(int? id)
         {
-            return await _context.Block.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context
+                         .Block
+                         .Include(b => b.Category)
+                         .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<IEnumerable<Block>> Search(int? CategoryId, DateTime? from, DateTime? to, bool important)
+        public async Task<IEnumerable<Block>> SearchAsync(
+            int? CategoryId, 
+            DateTime? from, 
+            DateTime? to, 
+            bool important
+            )
         {
 
             var blocks = _context.Block.AsQueryable();

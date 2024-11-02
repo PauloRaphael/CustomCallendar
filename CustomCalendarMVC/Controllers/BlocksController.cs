@@ -1,37 +1,42 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataRepository.Data;
 using DataRepository.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CustomCalendarMVC.Models;
+using DataRepository.Services;
 
 namespace CustomCalendarMVC.Controllers
 {
     public class BlocksController : Controller
     {
-        private readonly CustomCalendarDBContext _context;
+        private readonly BlockService _blockService;
+        private readonly CategoryService _categoryService;
 
-        public BlocksController(CustomCalendarDBContext context)
+        public BlocksController(BlockService blockService, CategoryService categoryService)
         {
-            _context = context;
+            _blockService = blockService;
+            _categoryService = categoryService;
         }
 
         // GET: Blocks
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
+            ViewBag.CategoryId = new SelectList(await _categoryService
+                                                      .GetCategoriesAsync(), 
+                                                      "Id", "Name");
 
-            var blocks = _context.Block.Where(m => m.Date >= DateTime.Now).OrderBy(b => b.Date).ToList();
+            var blocks = await _blockService.GetFutureBlocksAsync();
 
             return View(new BlockViewModel { Block = blocks });
         }
 
-        public IActionResult Previous()
+        public async Task<IActionResult> PreviousAsync()
         {
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
+            ViewBag.CategoryId = new SelectList(await _categoryService.
+                                                      GetCategoriesAsync(), 
+                                                      "Id", "Name");
 
-            var blocks = _context.Block.Where(m => m.Date < DateTime.Now).OrderBy(b => b.Date).ToList();
-
+            var blocks = await _blockService.GetPreviousBlocksAsync();
             return View(new BlockViewModel { Block = blocks });
         }
 
@@ -43,9 +48,7 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var block = await _context.Block
-                .Include(b => b.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var block = await _blockService.GetBlockAsync(id);
 
             if (block == null)
             {
@@ -56,9 +59,9 @@ namespace CustomCalendarMVC.Controllers
         }
 
 
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            var categories = _context.Category.ToList();
+            var categories = await _categoryService.GetCategoriesAsync();
             ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
             return View();
         }
@@ -69,21 +72,23 @@ namespace CustomCalendarMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(block);
-                await _context.SaveChangesAsync();
+                await _blockService.InsertAsync(block);
                 return RedirectToAction(nameof(Index));
             }
 
             ModelState.Remove("Category");
 
             // Reassign ViewBag.CategoryId if ModelState is invalid
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+            ViewBag.CategoryId = new SelectList(await _categoryService
+                                                      .GetCategoriesAsync(), 
+                                                      "Id", "Name", 
+                                                      block.CategoryId);
             return View(block);
         }
 
-        public IActionResult CreateMany()
+        public async Task<IActionResult> CreateMany()
         {
-            var categories = _context.Category.ToList(); // Ensure this is not null
+            var categories = await _categoryService.GetCategoriesAsync();
             ViewBag.CategoryId = new SelectList(categories, "Id", "Name");
             return View();
         }
@@ -91,49 +96,23 @@ namespace CustomCalendarMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateMany(Block block, int repetitions, string span)
+        public async Task<IActionResult> CreateMany(
+            Block block, 
+            int repetitions, 
+            string span
+            )
         {
             if (!ModelState.IsValid)
             {
                 ModelState.Remove("Category");
-                ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+                ViewBag.CategoryId = new SelectList(await _categoryService
+                                                          .GetCategoriesAsync(), 
+                                                          "Id", "Name", 
+                                                          block.CategoryId);
                 return View(block);
             }
 
-            var blocksToAdd = new List<Block>(); 
-            var initialDate = block.Date; 
-
-            for (int i = 0; i < repetitions; i++)
-            {
-
-                var newBlock = new Block
-                {
-                    Id = 0,
-                    Title = block.Title,
-                    EventText = block.EventText,
-                    Important = block.Important,
-                    CategoryId = block.CategoryId
-                };
-
-                switch (span)
-                {
-                    case "Yearly":
-                        newBlock.Date = initialDate.AddYears(i);
-                        break;
-                    case "Monthly":
-                        newBlock.Date = initialDate.AddMonths(i);
-                        break;
-                    case "Daily":
-                        newBlock.Date = initialDate.AddDays(i);
-                        break;
-                }
-
-                blocksToAdd.Add(newBlock);
-            }
-
-            _context.Block.AddRange(blocksToAdd);
-
-            await _context.SaveChangesAsync();
+            await _blockService.InsertMany(block, repetitions, span);
             return RedirectToAction(nameof(Index));
         }
 
@@ -147,14 +126,18 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var block = await _context.Block.FindAsync(id);
+            var block = await _blockService.GetBlockAsync(id);
+
             if (block == null)
             {
                 return NotFound();
             }
 
             // Populate categories for the dropdown
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+            ViewBag.CategoryId = new SelectList(await _categoryService
+                                                      .GetCategoriesAsync(), 
+                                                      "Id", "Name", 
+                                                      block.CategoryId);
 
             return View(block);
         }
@@ -162,7 +145,10 @@ namespace CustomCalendarMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Date,EventText,Important,CategoryId")] Block block)
+        public async Task<IActionResult> Edit(
+            int id, 
+            [Bind("Id,Title,Date,EventText,Important,CategoryId")] Block block
+            )
         {
             if (id != block.Id)
             {
@@ -173,12 +159,11 @@ namespace CustomCalendarMVC.Controllers
             {
                 try
                 {
-                    _context.Update(block);
-                    await _context.SaveChangesAsync();
+                    await _blockService.UpdateBlockAsync(block);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlockExists(block.Id))
+                    if (!_blockService.BlockExists(block.Id))
                     {
                         return NotFound();
                     }
@@ -191,7 +176,10 @@ namespace CustomCalendarMVC.Controllers
             }
 
             // Repopulate ViewBag.CategoryId if validation fails
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name", block.CategoryId);
+            ViewBag.CategoryId = new SelectList(await _categoryService
+                                                      .GetCategoriesAsync(),
+                                                      "Id", "Name",
+                                                      block.CategoryId);
             return View(block);
         }
 
@@ -204,9 +192,7 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var block = await _context.Block
-                .Include(b => b.Category) // Include the Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var block = await _blockService.GetBlockAsync(id);
 
             if (block == null)
             {
@@ -222,65 +208,38 @@ namespace CustomCalendarMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var block = await _context.Block.FindAsync(id);
+            var block = await _blockService.GetBlockAsync(id);
+
             if (block != null)
             {
-                _context.Block.Remove(block);
+                await _blockService.DeleteBlockAsync(block);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BlockExists(int id)
+        public async Task<IActionResult> SearchAsync(
+            int? CategoryId,
+            DateTime? from,
+            DateTime? to,
+            bool important
+            )
         {
-            return _context.Block.Any(e => e.Id == id);
-        }
 
-        public IActionResult Search(int? CategoryId, DateTime? from, DateTime? to, bool important)
-        {
+            var blockList = await _blockService.SearchAsync(CategoryId, from, to, important);
 
-            var blocks = _context.Block.AsQueryable();
+            ViewBag.CategoryId = new SelectList(await _categoryService
+                                                      .GetCategoriesAsync(),
+                                                      "Id", "Name");
 
-            if (CategoryId.HasValue)
-            {
-                blocks = blocks.Where(b => b.CategoryId == CategoryId.Value);
-            }
-
-            if (from.HasValue)
-            {
-                blocks = blocks.Where(b => b.Date >= from.Value);
-            }
-
-            if (to.HasValue)
-            {
-                blocks = blocks.Where(b => b.Date <= to.Value);
-            }
-
-            if (important)
-            {
-                blocks = blocks.Where(b => b.Important == true);
-            }
-
-            var blockList = blocks.ToList();
-
-            ViewBag.CategoryId = new SelectList(_context.Category, "Id", "Name");
-
-            return View(nameof(Search), new BlockViewModel { Block = blockList });
+            return View(nameof(SearchAsync), new BlockViewModel { Block = blockList });
 
         }
 
 
-        public IActionResult DeleteOldBlocks()
+        public async Task<IActionResult> DeleteOldBlocksAsync()
         {
-            var currentTime = DateTime.Now;
-            var oldBlocks = _context.Block.Where(b => b.Date < currentTime).ToList();
-
-            if (oldBlocks.Count != 0)
-            {
-                _context.Block.RemoveRange(oldBlocks);
-                _context.SaveChanges();
-            }
+            await _blockService.DeleteOldBlocks();
 
             return RedirectToAction(nameof(Index));
         }
