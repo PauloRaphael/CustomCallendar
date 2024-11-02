@@ -7,14 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataRepository.Data;
 using DataRepository.Entities;
+using DataRepository.Services;
 
 namespace CustomCalendarMVC.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly CustomCalendarDBContext _context;
+        private readonly CategoryService _context;
 
-        public CategoriesController(CustomCalendarDBContext context)
+        public CategoriesController(CategoryService context)
         {
             _context = context;
         }
@@ -22,7 +23,7 @@ namespace CustomCalendarMVC.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Category.ToListAsync());
+            return View(await _context.GetCategoriesAsync());
         }
 
         // GET: Categories/Details/5
@@ -33,8 +34,8 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category = await _context.GetCategoryAsync(id);
+
             if (category == null)
             {
                 return NotFound();
@@ -58,8 +59,7 @@ namespace CustomCalendarMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
-                await _context.SaveChangesAsync();
+                await _context.InsertAsync(category);
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -73,7 +73,8 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category.FindAsync(id);
+            var category = await _context.GetCategoryAsync(id);
+
             if (category == null)
             {
                 return NotFound();
@@ -97,12 +98,11 @@ namespace CustomCalendarMVC.Controllers
             {
                 try
                 {
-                    _context.Update(category);
-                    await _context.SaveChangesAsync();
+                    await _context.UpdateCategoryAsync(category);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!_context.CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -124,8 +124,8 @@ namespace CustomCalendarMVC.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Category
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var category = await _context.GetCategoryAsync(id);
+
             if (category == null)
             {
                 return NotFound();
@@ -139,19 +139,14 @@ namespace CustomCalendarMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Category.FindAsync(id);
+            var category = await _context.GetCategoryAsync(id);
+
             if (category != null)
             {
-                _context.Category.Remove(category);
+                await _context.DeleteCategoryAsync(category);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Category.Any(e => e.Id == id);
         }
     }
 }

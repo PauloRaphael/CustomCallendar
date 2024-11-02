@@ -1,4 +1,5 @@
 using DataRepository.Data;
+using DataRepository.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CustomCalendarDBContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 23))));
+
+// Register SeedingService
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 

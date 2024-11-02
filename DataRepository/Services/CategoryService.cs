@@ -18,6 +18,11 @@ namespace DataRepository.Services
             return await _context.Category.ToListAsync();
         }
 
+        public async Task<Category?> GetCategoryAsync(int? id)
+        {
+            return await _context.Category.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
         public async Task InsertAsync(Category category)
         {
             _context.Add(category);
@@ -34,6 +39,10 @@ namespace DataRepository.Services
         {
             _context.Category.Remove(category);
             await _context.SaveChangesAsync();
+        }
+        public bool CategoryExists(int id)
+        {
+            return _context.Category.Any(e => e.Id == id);
         }
     }
 }
