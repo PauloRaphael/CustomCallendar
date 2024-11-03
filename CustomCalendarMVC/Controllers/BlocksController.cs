@@ -22,7 +22,7 @@ namespace CustomCalendarMVC.Controllers
         public async Task<IActionResult> Index()
         {
             ViewBag.CategoryId = new SelectList(await _categoryService
-                                                      .GetCategoriesAsync(), 
+                                                      .GetCategoriesAsync(),
                                                       "Id", "Name");
 
             var blocks = await _blockService.GetFutureBlocksAsync();
@@ -33,7 +33,7 @@ namespace CustomCalendarMVC.Controllers
         public async Task<IActionResult> PreviousAsync()
         {
             ViewBag.CategoryId = new SelectList(await _categoryService.
-                                                      GetCategoriesAsync(), 
+                                                      GetCategoriesAsync(),
                                                       "Id", "Name");
 
             var blocks = await _blockService.GetPreviousBlocksAsync();
@@ -80,8 +80,8 @@ namespace CustomCalendarMVC.Controllers
 
             // Reassign ViewBag.CategoryId if ModelState is invalid
             ViewBag.CategoryId = new SelectList(await _categoryService
-                                                      .GetCategoriesAsync(), 
-                                                      "Id", "Name", 
+                                                      .GetCategoriesAsync(),
+                                                      "Id", "Name",
                                                       block.CategoryId);
             return View(block);
         }
@@ -97,8 +97,8 @@ namespace CustomCalendarMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMany(
-            Block block, 
-            int repetitions, 
+            Block block,
+            int repetitions,
             string span
             )
         {
@@ -106,8 +106,8 @@ namespace CustomCalendarMVC.Controllers
             {
                 ModelState.Remove("Category");
                 ViewBag.CategoryId = new SelectList(await _categoryService
-                                                          .GetCategoriesAsync(), 
-                                                          "Id", "Name", 
+                                                          .GetCategoriesAsync(),
+                                                          "Id", "Name",
                                                           block.CategoryId);
                 return View(block);
             }
@@ -135,8 +135,8 @@ namespace CustomCalendarMVC.Controllers
 
             // Populate categories for the dropdown
             ViewBag.CategoryId = new SelectList(await _categoryService
-                                                      .GetCategoriesAsync(), 
-                                                      "Id", "Name", 
+                                                      .GetCategoriesAsync(),
+                                                      "Id", "Name",
                                                       block.CategoryId);
 
             return View(block);
@@ -146,7 +146,7 @@ namespace CustomCalendarMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id, 
+            int id,
             [Bind("Id,Title,Date,EventText,Important,CategoryId")] Block block
             )
         {
@@ -218,7 +218,7 @@ namespace CustomCalendarMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> SearchAsync(
+        public async Task<IActionResult> Search(
             int? CategoryId,
             DateTime? from,
             DateTime? to,
@@ -232,14 +232,12 @@ namespace CustomCalendarMVC.Controllers
                                                       .GetCategoriesAsync(),
                                                       "Id", "Name");
 
-            return View(nameof(SearchAsync), new BlockViewModel { Block = blockList });
-
+            return View(nameof(Search), new BlockViewModel { Block = blockList });
         }
 
-
-        public async Task<IActionResult> DeleteOldBlocksAsync()
+        public async Task<IActionResult> DeleteOldBlocks()
         {
-            await _blockService.DeleteOldBlocks();
+            await _blockService.DeleteOldBlocksAsync();
 
             return RedirectToAction(nameof(Index));
         }

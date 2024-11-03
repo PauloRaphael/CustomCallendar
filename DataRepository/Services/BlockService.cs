@@ -139,7 +139,7 @@ namespace DataRepository.Services
             return _context.Block.Any(e => e.Id == id);
         }
 
-        public async Task DeleteOldBlocks()
+        public async Task DeleteOldBlocksAsync()
         {
             var currentTime = DateTime.Now;
             var oldBlocks = _context.Block.Where(b => b.Date < currentTime).ToList();
