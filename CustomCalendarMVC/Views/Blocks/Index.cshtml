@@ -4,7 +4,7 @@
     ViewData["Title"] = "Next Events";
 }
 
-@await Html.PartialAsync("_HeaderWithButtons", Model)
+    @await Html.PartialAsync("_HeaderWithButtons", Model)
 
 <div class="d-flex justify-content-end">
     @await Html.PartialAsync("_SearchForm", Model)
@@ -50,9 +50,9 @@
                 </div>
                 <div class="card-footer text-muted">
                     @{
-                        var today = DateTime.Now;
+                        var today = DateTime.Now.Date;
                         var eventDate = item.value.Date;
-                        var daysLeft = (eventDate - today).Days;
+                        var daysLeft = eventDate.Subtract(today).Days;
 
                         if (daysLeft > 0)
                         {
