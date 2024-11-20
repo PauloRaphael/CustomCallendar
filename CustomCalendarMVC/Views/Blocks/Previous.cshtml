@@ -43,7 +43,7 @@
             <div class="card-footer text-muted">
                 @{
                     // Calculate the number of days remaining
-                    var today = DateTime.Now;
+                    var today = DateTime.Now.Date;
                     var eventDate = item.value.Date; // Assuming item.value.Date is a DateTime object
                     var daysLeft = (eventDate - today).Days;
 
