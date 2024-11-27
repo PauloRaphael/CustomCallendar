@@ -1,7 +1,6 @@
 ﻿using DataRepository.Data;
 using DataRepository.Entities;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Plugins;
 namespace DataRepository.Services
 {
     public class CategoryService
