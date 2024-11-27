@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DataRepository.Data;
 using DataRepository.Entities;
 using DataRepository.Services;
 
 namespace CustomCalendarMVC.Controllers
 {
+    [ServiceFilter(typeof(PasswordAuthorizeAttribute))]
     public class CategoriesController : Controller
     {
         private readonly CategoryService _context;

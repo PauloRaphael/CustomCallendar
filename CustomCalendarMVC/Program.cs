@@ -5,7 +5,12 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<PasswordAuthorizeAttribute>();
+});
+
+builder.Services.AddScoped<PasswordAuthorizeAttribute>();
 
 builder.Services.AddDbContext<CustomCalendarDBContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -14,6 +19,17 @@ builder.Services.AddDbContext<CustomCalendarDBContext>(options =>
 // Register SeedingService
 builder.Services.AddScoped<BlockService>();
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<LoginService>();
+
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 var app = builder.Build();
 
@@ -27,6 +43,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

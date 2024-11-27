@@ -15,22 +15,33 @@
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Blocks" asp-action="Index">Custom Calendar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarColor02">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Previous">Previous Events</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Index">Next Events</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
-                        </li>
-                     </ul>
+                    @if (Context.Session.GetString("Authenticated") == "true")
+                    {
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Previous">Previous Events</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Blocks" asp-action="Index">Next Events</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
+                            </li>
+                        </ul>
+                    }
                 </div>
+                @if (Context.Session.GetString("Authenticated") == "true")
+                {
+                    <form asp-controller="Login" class="d-inline" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-primary">
+                            Logout
+                        </button>
+                    </form>
+                }
             </div>
         </nav>
     </header>
@@ -49,8 +60,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-<!-- Bootstrap JavaScript (necessary for collapse functionality) -->
-
+    <!-- Bootstrap JavaScript (necessary for collapse functionality) -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

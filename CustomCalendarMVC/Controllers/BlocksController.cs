@@ -7,6 +7,7 @@ using DataRepository.Services;
 
 namespace CustomCalendarMVC.Controllers
 {
+    [ServiceFilter(typeof(PasswordAuthorizeAttribute))]
     public class BlocksController : Controller
     {
         private readonly BlockService _blockService;
