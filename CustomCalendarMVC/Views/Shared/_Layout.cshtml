@@ -37,7 +37,7 @@
                 @if (Context.Session.GetString("Authenticated") == "true")
                 {
                     <form asp-controller="Login" class="d-inline" asp-action="Logout" method="post">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-danger">
                             Logout
                         </button>
                     </form>
